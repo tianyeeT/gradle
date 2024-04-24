@@ -6,8 +6,8 @@ Gradle is made up of the following processes:
 - CLI client. This is the `gradle` or `gradlew` command, and is responsible for locating, starting and interacting with the Gradle daemon. 
 - Tooling API client. This a library that is embedded into applications, such as IDEs or CI agents, that allows them to act as a Gradle client.
 - Worker processes. Daemon processes that the Gradle starts to run specific kinds of work, such as compilation or test execution.
-
-These are all Java processes.
+- `https://services.gradle.org/`. Provides information about Gradle releases and distributions.
+- `https://plugins.gradle.org/`. The Gradle plugin portal.
 
 ```mermaid
     graph TD
@@ -31,4 +31,13 @@ These are all Java processes.
     
     worker["Worker process"]
     daemon --> worker
+    
+    services["services.gradle.org"]
+    daemon --> services
+
+    plugins["plugins.gradle.org"]
+    daemon --> plugins
+
 ```
+
+These are all Java processes. All source core in Gradle is written to target one or more of these runtimes.
