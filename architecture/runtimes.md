@@ -33,15 +33,23 @@ Gradle is made up of the following processes:
         
         worker["Worker process"]
         daemon --> worker
+
+        worker2["Worker process"]
+        daemon --> worker2
+
+        worker3["Worker process"]
+        daemon --> worker3
         
     end
     
-    services["services.gradle.org"]
-    daemon --> services
-
-    plugins["plugins.gradle.org"]
-    daemon --> plugins
-
+    subgraph network
+        services["services.gradle.org"]
+        daemon --> services
+    
+        plugins["plugins.gradle.org"]
+        daemon --> plugins
+    end
+    
 ```
 
 These are all Java processes. All source core in Gradle is written to target one or more of these runtimes.
