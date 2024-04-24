@@ -10,7 +10,7 @@ Gradle is made up of the following processes:
 - https://plugins.gradle.org/. The Gradle plugin portal.
 
 ```mermaid
-    graph TD
+    graph LR
     
     subgraph local["Local machine"]
         
@@ -42,7 +42,7 @@ Gradle is made up of the following processes:
         
     end
     
-    subgraph network
+    subgraph Internet
         services["services.gradle.org"]
         daemon --> services
     
