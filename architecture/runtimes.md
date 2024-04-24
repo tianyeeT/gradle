@@ -6,31 +6,35 @@ Gradle is made up of the following processes:
 - CLI client. This is the `gradle` or `gradlew` command, and is responsible for locating, starting and interacting with the Gradle daemon. 
 - Tooling API client. This a library that is embedded into applications, such as IDEs or CI agents, that allows them to act as a Gradle client.
 - Worker processes. Daemon processes that the Gradle starts to run specific kinds of work, such as compilation or test execution.
-- `https://services.gradle.org/`. Provides information about Gradle releases and distributions.
-- `https://plugins.gradle.org/`. The Gradle plugin portal.
+- https://services.gradle.org/. Provides information about Gradle releases and distributions.
+- https://plugins.gradle.org/. The Gradle plugin portal.
 
 ```mermaid
     graph TD
     
-    subgraph gradle
-        cli["CLI client"]
-    end
-
-    subgraph gradlew
-        cli_gradlew["CLI client"]
-    end
-
-    subgraph IDE    
-        tapi["Tooling API client"]
-    end
+    subgraph local["Local machine"]
+        
+        subgraph gradle
+            cli["CLI client"]
+        end
     
-    daemon["Gradle daemon"]
-    cli --> daemon
-    cli_gradlew --> daemon
-    tapi --> daemon
+        subgraph gradlew
+            cli_gradlew["CLI client"]
+        end
     
-    worker["Worker process"]
-    daemon --> worker
+        subgraph IDE    
+            tapi["Tooling API client"]
+        end
+        
+        daemon["Gradle daemon"]
+        cli --> daemon
+        cli_gradlew --> daemon
+        tapi --> daemon
+        
+        worker["Worker process"]
+        daemon --> worker
+        
+    end
     
     services["services.gradle.org"]
     daemon --> services
