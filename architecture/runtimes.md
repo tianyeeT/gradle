@@ -12,12 +12,21 @@ These are all Java processes.
 ```mermaid
     graph TD
     
-    cli["CLI client"]
-    
-    tapi["Tooling API client"]
+    subgraph gradle
+        cli["CLI client"]
+    end
+
+    subgraph gradlew
+        cli_gradlew["CLI client"]
+    end
+
+    subgraph IDE    
+        tapi["Tooling API client"]
+    end
     
     daemon["Gradle daemon"]
     cli --> daemon
+    cli_gradlew --> daemon
     tapi --> daemon
     
     worker["Worker process"]
