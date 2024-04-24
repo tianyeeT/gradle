@@ -4,7 +4,15 @@
 
 # Gradle platform architecture
 
-The diagram below shows the main components of the Gradle architecture. See [ADR4](standards/0004-use-a-platform-architecture.md) for more details.
+Gradle is arranged into coarse-grained components called "architecture modules" and "platforms".
+See [ADR4](standards/0004-use-a-platform-architecture.md) for a definition of these terms.
+
+Each platform and module has its own source directory under [platforms/](../platforms).
+In these source directories, you will find the Gradle projects that make up the platform or module.
+
+The platforms and modules are defined using a DSL in [settings.gradle.kts](../settings.gradle.kts)
+
+The diagram below shows the current set of architecture modules and platforms:
 
 <!-- This diagram is generated. Use `./gradlew :architectureDoc` to update it -->
 ```mermaid
