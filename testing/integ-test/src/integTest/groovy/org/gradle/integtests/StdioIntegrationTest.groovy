@@ -21,16 +21,15 @@ import org.gradle.util.internal.TextUtil
 
 class StdioIntegrationTest extends AbstractIntegrationSpec {
 
-    def "build can read stdin when stdin has bounded length"() {
+    def "task can read stdin when stdin has bounded length"() {
         given:
-        executer.requireOwnGradleUserHomeDir()
         buildFile << '''
 task echo {
     doLast {
         def reader = new BufferedReader(new InputStreamReader(System.in))
         while (true) {
             def line = reader.readLine() // readline will chomp the newline off the end
-            if (!line || line == 'close') {
+            if (!line) {
                 break
             }
             print "[$line]"
@@ -48,23 +47,22 @@ task echo {
         })
 
         when:
-        executer.withArguments("-s", "--info")
         run "echo"
 
         then:
         output.contains("[abc][123]")
     }
 
-    def "build can read stdin when stdin has unbounded length"() {
+    def "task can read stdin when stdin has unbounded length"() {
         given:
-        requireOwnGradleUserHomeDir()
         buildFile << '''
 task echo {
     doLast {
         def reader = new BufferedReader(new InputStreamReader(System.in))
         while (true) {
             def line = reader.readLine() // readline will chomp the newline off the end
-            if (!line || line == 'close') {
+            assert line != null
+            if (line == 'close') {
                 break
             }
             print "[$line]"
@@ -73,11 +71,11 @@ task echo {
 }
 '''
         when:
-        executer.withArguments("-s", "--info").withStdinPipe(new PipedOutputStream() {
+        executer.withStdinPipe(new PipedOutputStream() {
             @Override
             void connect(PipedInputStream snk) throws IOException {
                 super.connect(snk)
-                write(TextUtil.toPlatformLineSeparators("abc\n123\nclose\n").bytes)
+                write(TextUtil.toPlatformLineSeparators("abc\n123\nclose\nmore-stuff").bytes)
             }
         })
         run "echo"
