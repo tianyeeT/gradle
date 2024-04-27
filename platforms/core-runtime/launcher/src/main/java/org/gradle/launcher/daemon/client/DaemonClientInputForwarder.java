@@ -33,7 +33,6 @@ import java.io.InputStreamReader;
 import java.util.concurrent.Executor;
 
 public class DaemonClientInputForwarder implements Stoppable {
-    public static final int DEFAULT_BUFFER_SIZE = 8192;
     private final ForwardingUserInput forwarder;
     private final GlobalUserInputReceiver userInput;
 
@@ -43,23 +42,12 @@ public class DaemonClientInputForwarder implements Stoppable {
         GlobalUserInputReceiver userInput,
         ExecutorFactory executorFactory
     ) {
-        this(inputStream, dispatch, userInput, executorFactory, DEFAULT_BUFFER_SIZE);
-    }
-
-    public DaemonClientInputForwarder(
-        InputStream inputStream,
-        Dispatch<? super InputMessage> dispatch,
-        GlobalUserInputReceiver userInput,
-        ExecutorFactory executorFactory,
-        int bufferSize
-    ) {
         this.userInput = userInput;
         forwarder = new ForwardingUserInput(inputStream, dispatch, executorFactory.create("Stdin"));
         userInput.dispatchTo(forwarder);
     }
 
     public void start() {
-        forwarder.start();
     }
 
     @Override
@@ -128,10 +116,8 @@ public class DaemonClientInputForwarder implements Stoppable {
             });
         }
 
-        void start() {
-        }
-
         void stop() {
+            dispatch.dispatch(new CloseInput());
         }
     }
 }

@@ -21,6 +21,7 @@ import org.gradle.initialization.BuildRequestContext;
 import org.gradle.internal.concurrent.ExecutorFactory;
 import org.gradle.internal.invocation.BuildAction;
 import org.gradle.internal.logging.console.GlobalUserInputReceiver;
+import org.gradle.internal.logging.events.ReadStdInEvent;
 import org.gradle.launcher.daemon.client.DaemonClientInputForwarder;
 import org.gradle.launcher.daemon.protocol.CloseInput;
 import org.gradle.launcher.daemon.protocol.ForwardInput;
@@ -60,7 +61,11 @@ public class ForwardStdInToThisProcess implements BuildActionExecuter<BuildActio
     @Override
     public BuildActionResult execute(BuildAction action, BuildActionParameters actionParameters, BuildRequestContext buildRequestContext) {
         ClientInputForwarder forwarder = new ClientInputForwarder(userInputReader, event -> {
-            throw new UnsupportedOperationException();
+            if (event instanceof ReadStdInEvent) {
+                userInputReceiver.readAndForwardStdin((ReadStdInEvent) event);
+            } else {
+                throw new IllegalArgumentException();
+            }
         });
         return forwarder.forwardInput(stdinHandler -> {
             DaemonClientInputForwarder inputForwarder = new DaemonClientInputForwarder(finalStandardInput, message -> {
