@@ -20,6 +20,12 @@ import org.gradle.integtests.fixtures.AbstractIntegrationSpec
 import org.gradle.util.internal.TextUtil
 
 class StdioIntegrationTest extends AbstractIntegrationSpec {
+    def setup() {
+        executer.requireDaemon()
+        // This isn't actually required - the test is fine with shared daemons
+        // In fact, it would be much better to test this feature using shared daemons
+        executer.requireIsolatedDaemons()
+    }
 
     def "task can read stdin when stdin has bounded length"() {
         given:
