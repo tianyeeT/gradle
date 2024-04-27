@@ -104,6 +104,7 @@ class StdInStream extends InputStream {
             }
             System.arraycopy(bytes, 0, buffer, writePos, bytes.length);
             writePos += bytes.length;
+            lock.notifyAll();
         }
     }
 }
