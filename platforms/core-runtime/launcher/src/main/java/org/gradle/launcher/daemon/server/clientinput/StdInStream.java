@@ -17,16 +17,24 @@
 package org.gradle.launcher.daemon.server.clientinput;
 
 import org.gradle.internal.UncheckedException;
+import org.gradle.internal.logging.events.OutputEventListener;
+import org.gradle.internal.logging.events.ReadStdInEvent;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 class StdInStream extends InputStream {
+    private final OutputEventListener eventDispatch;
     private final Object lock = new Object();
-    private final byte[] buffer = new byte[1024];
+    private final byte[] buffer = new byte[16 * 1024];
     private int readPos;
     private int writePos;
+    private boolean waiting;
     private boolean closed;
+
+    public StdInStream(OutputEventListener eventDispatch) {
+        this.eventDispatch = eventDispatch;
+    }
 
     @Override
     public int read() throws IOException {
@@ -58,6 +66,10 @@ class StdInStream extends InputStream {
     }
 
     private void waitForContent() {
+        if (readPos == writePos && !waiting) {
+            eventDispatch.onOutput(new ReadStdInEvent(buffer.length));
+            waiting = true;
+        }
         while (readPos == writePos && !closed) {
             try {
                 lock.wait();
@@ -77,6 +89,10 @@ class StdInStream extends InputStream {
 
     public void received(byte[] bytes) {
         synchronized (lock) {
+            if (!waiting) {
+                throw new IllegalStateException();
+            }
+            waiting = false;
             if (readPos == writePos) {
                 readPos = 0;
                 writePos = 0;

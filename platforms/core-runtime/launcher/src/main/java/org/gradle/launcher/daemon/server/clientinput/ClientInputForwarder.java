@@ -20,6 +20,7 @@ import org.gradle.api.internal.tasks.userinput.UserInputReader;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
 import org.gradle.internal.IoActions;
+import org.gradle.internal.logging.events.OutputEventListener;
 import org.gradle.launcher.daemon.protocol.ForwardInput;
 import org.gradle.launcher.daemon.protocol.UserResponse;
 import org.gradle.launcher.daemon.server.api.StdinHandler;
@@ -33,13 +34,15 @@ import java.util.function.Function;
 public class ClientInputForwarder {
     private static final Logger LOGGER = Logging.getLogger(ClientInputForwarder.class);
     private final UserInputReader inputReader;
+    private final OutputEventListener eventDispatch;
 
-    public ClientInputForwarder(UserInputReader inputReader) {
+    public ClientInputForwarder(UserInputReader inputReader, OutputEventListener eventDispatch) {
         this.inputReader = inputReader;
+        this.eventDispatch = eventDispatch;
     }
 
     public <T> T forwardInput(Function<StdinHandler, T> action) {
-        final StdInStream stdInStream = new StdInStream();
+        final StdInStream stdInStream = new StdInStream(eventDispatch);
         inputReader.startInput();
 
         StdinHandler stdinHandler = new StdinHandler() {

@@ -59,7 +59,9 @@ public class ForwardStdInToThisProcess implements BuildActionExecuter<BuildActio
 
     @Override
     public BuildActionResult execute(BuildAction action, BuildActionParameters actionParameters, BuildRequestContext buildRequestContext) {
-        ClientInputForwarder forwarder = new ClientInputForwarder(userInputReader);
+        ClientInputForwarder forwarder = new ClientInputForwarder(userInputReader, event -> {
+            throw new UnsupportedOperationException();
+        });
         return forwarder.forwardInput(stdinHandler -> {
             DaemonClientInputForwarder inputForwarder = new DaemonClientInputForwarder(finalStandardInput, message -> {
                 if (message instanceof UserResponse) {
