@@ -58,22 +58,22 @@ public class DaemonClientInputForwarder implements Stoppable {
 
     private static class ForwardingUserInput implements UserInputReceiver {
         private final Dispatch<? super InputMessage> dispatch;
-        private final InputStream inputStream;
+        private final BufferedReader reader;
         private final Executor executor;
 
         public ForwardingUserInput(InputStream inputStream, Dispatch<? super InputMessage> dispatch, Executor executor) {
             this.dispatch = dispatch;
-            this.inputStream = inputStream;
+            this.reader = new BufferedReader(new InputStreamReader(inputStream));
             this.executor = executor;
         }
 
         @Override
         public void readAndForwardStdin(int maxLength) {
             executor.execute(() -> {
-                byte[] buffer = new byte[maxLength];
+                char[] buffer = new char[16 * 1024];
                 int nread;
                 try {
-                    nread = inputStream.read(buffer);
+                    nread = reader.read(buffer);
                 } catch (IOException e) {
                     throw UncheckedException.throwAsUncheckedException(e);
                 }
@@ -81,8 +81,8 @@ public class DaemonClientInputForwarder implements Stoppable {
                     CloseInput message = new CloseInput();
                     dispatch.dispatch(message);
                 } else {
-                    byte[] result = new byte[nread];
-                    System.arraycopy(buffer, 0, result, 0, nread);
+                    String text = new String(buffer, 0, nread);
+                    byte[] result = text.getBytes();
                     ForwardInput message = new ForwardInput(result);
                     dispatch.dispatch(message);
                 }
@@ -92,7 +92,6 @@ public class DaemonClientInputForwarder implements Stoppable {
         @Override
         public void readAndForwardText(Normalizer normalizer) {
             executor.execute(() -> {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
                 while (true) {
                     String input;
                     try {
