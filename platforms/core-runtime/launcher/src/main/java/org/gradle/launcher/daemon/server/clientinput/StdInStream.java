@@ -67,7 +67,7 @@ class StdInStream extends InputStream {
 
     private void waitForContent() {
         if (readPos == writePos && !waiting) {
-            eventDispatch.onOutput(new ReadStdInEvent(buffer.length));
+            eventDispatch.onOutput(new ReadStdInEvent());
             waiting = true;
         }
         while (readPos == writePos && !closed) {
