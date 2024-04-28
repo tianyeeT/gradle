@@ -7,7 +7,6 @@ description = "Execution engine that takes a unit of work and makes it happen"
 errorprone {
     disabledChecks.addAll(
         "AnnotateFormatMethod", // 1 occurrences
-        "BadImport", // 2 occurrences
         "Finally", // 2 occurrences
         "ReferenceEquality", // 1 occurrences
         "SameNameButDifferent", // 5 occurrences
@@ -23,7 +22,9 @@ dependencies {
     api(libs.jsr305)
     api(libs.slf4jApi)
 
-    api(project(":base-annotations"))
+    api(projects.concurrent)
+    api(projects.javaLanguageExtensions)
+    api(projects.serialization)
     api(project(":base-services"))
     api(project(":build-cache"))
     api(project(":build-cache-base"))
@@ -33,12 +34,12 @@ dependencies {
     api(project(":files"))
     api(project(":functional"))
     api(project(":hashing"))
-    api(project(":messaging"))
     api(project(":model-core"))
     api(project(":persistent-cache"))
     api(project(":problems-api"))
     api(project(":snapshots"))
 
+    implementation(projects.time)
     implementation(project(":logging"))
     implementation(projects.enterpriseOperations) {
         because("Adds generic build operations for the execution engine")
@@ -53,6 +54,7 @@ dependencies {
     testImplementation(project(":base-services-groovy"))
     testImplementation(project(":resources"))
     testImplementation(libs.commonsIo)
+    testImplementation(testFixtures(projects.serialization))
     testImplementation(testFixtures(project(":base-services")))
     testImplementation(testFixtures(project(":build-operations")))
     testImplementation(testFixtures(project(":file-collections")))

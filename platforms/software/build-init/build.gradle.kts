@@ -9,7 +9,6 @@ This project should NOT be used as an implementation dependency anywhere (except
 
 errorprone {
     disabledChecks.addAll(
-        "BadImport", // 1 occurrences
         "DefaultCharset", // 6 occurrences
         "GetClassOnEnum", // 1 occurrences
         "HidingField", // 2 occurrences
@@ -27,7 +26,7 @@ dependencies {
     api(libs.jsr305)
     api(libs.maven3Settings)
 
-    api(project(":base-annotations"))
+    api(projects.javaLanguageExtensions)
     api(project(":base-services"))
     api(project(":core"))
     api(project(":core-api"))

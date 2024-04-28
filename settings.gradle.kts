@@ -68,7 +68,7 @@ val core = platform("core") {
 
     // Core Runtime Module
     module("core-runtime") {
-        subproject("base-annotations")
+        subproject("base-asm")
         subproject("base-services")
         subproject("bootstrap")
         subproject("build-configuration")
@@ -76,6 +76,7 @@ val core = platform("core") {
         subproject("build-option")
         subproject("build-profile")
         subproject("cli")
+        subproject("concurrent")
         subproject("distributions-basics")
         subproject("distributions-core")
         subproject("file-temp")
@@ -86,12 +87,16 @@ val core = platform("core") {
         subproject("instrumentation-declarations")
         subproject("internal-instrumentation-api")
         subproject("internal-instrumentation-processor")
+        subproject("io")
+        subproject("java-language-extensions")
         subproject("launcher")
         subproject("logging")
         subproject("logging-api")
         subproject("messaging")
         subproject("native")
         subproject("process-services")
+        subproject("serialization")
+        subproject("time")
         subproject("worker-services")
         subproject("wrapper")
         subproject("wrapper-shared")
@@ -121,6 +126,7 @@ val core = platform("core") {
     module("core-execution") {
         subproject("build-cache")
         subproject("build-cache-base")
+        subproject("build-cache-example-client")
         subproject("build-cache-local")
         subproject("build-cache-http")
         subproject("build-cache-packaging")
