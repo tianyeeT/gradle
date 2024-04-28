@@ -46,7 +46,6 @@ public class ClientInputForwarder {
         final StdInStream stdInStream = new StdInStream(new OutputEventListener() {
             @Override
             public void onOutput(OutputEvent event) {
-//                System.out.println("-> SENDING " + event);
                 eventDispatch.onOutput(event);
             }
         });
@@ -56,20 +55,17 @@ public class ClientInputForwarder {
             @Override
             public void onInput(ForwardInput input) {
                 LOGGER.debug("Writing forwarded input on this process' stdin.");
-                System.out.println("-> RECEIVED " + input.getBytes().length + " bytes");
                 stdInStream.received(input.getBytes());
             }
 
             @Override
             public void onUserResponse(UserResponse input) {
-                System.out.println("-> RECEIVED USER RESPONSE: " + input.getResponse());
                 inputReader.putInput(new UserInputReader.TextResponse(input.getResponse()));
             }
 
             @Override
             public void onEndOfInput() {
                 LOGGER.debug("Closing this process' stdin at end of input.");
-                System.out.println("-> RECEIVED END OF INPUT");
                 try {
                     stdInStream.close();
                     inputReader.putInput(UserInputReader.END_OF_INPUT);
@@ -85,7 +81,6 @@ public class ClientInputForwarder {
             return action.apply(stdinHandler);
         } finally {
             System.setIn(previousStdin);
-            System.out.println("-> CLOSE STDIN");
             IoActions.closeQuietly(stdInStream);
         }
     }
