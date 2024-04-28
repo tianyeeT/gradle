@@ -42,7 +42,6 @@ public class DefaultUserInputReceiver implements GlobalUserInputReceiver {
 
     @Override
     public void readAndForwardText(final PromptOutputEvent event) {
-        console.onOutput(new UserInputValidationProblemEvent(123, "-> READ USER INPUT TEXT\n"));
         UserInputReceiver userInput = getDelegate();
         userInput.readAndForwardText(new UserInputReceiver.Normalizer() {
             @Nullable
